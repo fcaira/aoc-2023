@@ -8,15 +8,10 @@ def parse_numerals_line(ln):
     return num1 + num2
 
 
-def get_calibration_vals(i):
+def part1(i):
     vals = []
     for ln in i:
         vals.append(int(parse_numerals_line(ln)))
-    return vals
-
-
-def part1(i):
-    vals = get_calibration_vals(i)
     return sum(vals)
 
 
@@ -26,8 +21,6 @@ def part2(i):
     for ln in i:
         for d in digits:
             if d in ln:
-                ln = ln.replace(d, d[0] + str(digits.index(d)+1) + d[1:])
+                ln = ln.replace(d, d[0] + str(digits.index(d) + 1) + d[1:])
         vals.append(int(parse_numerals_line(ln)))
     return sum(vals)
-
-  
