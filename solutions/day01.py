@@ -1,7 +1,3 @@
-from loguru import logger
-from collections import namedtuple
-
-
 def parse_numerals_line(ln):
     num1 = next(char for char in ln if char.isnumeric())
     num2 = next(char for char in reversed(ln) if char.isnumeric())
