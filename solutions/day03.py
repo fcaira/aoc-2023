@@ -1,9 +1,6 @@
 import re
 
-from collections import namedtuple
 from math import prod
-
-POI = namedtuple("POI", "loc, val")
 
 
 def part1(i):
