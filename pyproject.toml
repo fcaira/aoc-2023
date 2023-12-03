@@ -7,16 +7,14 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.11"
-numpy = "^1.26.2"
-word2number = "^1.1"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.4.3"
 loguru = "^0.7.2"
 
-
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.5.0"
+ruff = "^0.1.6"
 
 [build-system]
 requires = ["poetry-core"]
