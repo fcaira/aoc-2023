@@ -12,10 +12,9 @@ input = get_input(f"solutions/inputs/{day}")
 
 def test_parse_cards():
     # Card 1: 41 48 83 86 17 | 83 86  6 31 17  9 48 53
-    card = parse_cards(eg_input)[0]
+    card = parse_cards(eg_input)[1]
     assert card.id == 1
-    assert card.win_nums == {41, 48, 83, 86, 17}
-    assert card.our_nums == {83, 86, 6, 31, 17, 9, 48, 53}
+    assert card.num_won == 4
 
 
 @pytest.mark.parametrize(
