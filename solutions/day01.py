@@ -1,22 +1,25 @@
+import re
+
+
 def parse_numerals_line(ln):
-    num1 = next(char for char in ln if char.isnumeric())
-    num2 = next(char for char in reversed(ln) if char.isnumeric())
-    return num1 + num2
+    matches = re.findall(r"\d", ln)
+    return matches[0] + matches[-1]
 
 
 def part1(i):
-    vals = []
-    for ln in i:
-        vals.append(int(parse_numerals_line(ln)))
-    return sum(vals)
+    return sum(int(parse_numerals_line(ln)) for ln in i)
 
 
 def part2(i):
     vals = []
-    digits = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"]
+    digit_map = {
+        d: d[0] + str(idx + 1) + d[1:]
+        for idx, d in enumerate(
+            ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"]
+        )
+    }
     for ln in i:
-        for d in digits:
-            if d in ln:
-                ln = ln.replace(d, d[0] + str(digits.index(d) + 1) + d[1:])
+        for old, new in digit_map.items():
+            ln = ln.replace(old, new)
         vals.append(int(parse_numerals_line(ln)))
     return sum(vals)
