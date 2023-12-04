@@ -1,9 +1,20 @@
 import time
 
-from collections import namedtuple
+from collections import deque
+from dataclasses import dataclass
 from loguru import logger
 
-Card = namedtuple("Card", "id, num_won")
+
+@dataclass
+class Card:
+    id: int
+    num_won: int
+
+    def __hash__(self):
+        return self.id
+
+    def __eq__(self, other):
+        return self.id == other.id
 
 
 def parse_cards(raw_input):
@@ -39,28 +50,26 @@ def part1(i):
     return int(points)
 
 
-def part2(i):  # TODO make faster
+def part2(i):
     start = time.time()
     cards = parse_cards(i)
-    to_visit = list(cards.values())
-    visited = []
-    map = {}
-    for c in to_visit:
-        map.update(
-            {c.id: [cards[num] for num in range(c.id + 1, c.id + c.num_won + 1)]}
-        )
+    to_visit = deque(cards.values())
+    visited = 0
+    map = {
+        c.id: {cards[num] for num in range(c.id + 1, c.id + c.num_won + 1)}
+        for c in to_visit
+    }
 
     mid = time.time()
 
-    while len(to_visit) > 0:
-        card = to_visit[-1]
-        new_to_visit = map[card.id]
-        visited.append(card)
-        to_visit.pop()
-        to_visit.extend(new_to_visit)
+    while to_visit:
+        card = to_visit.pop()
+        visited += 1
+        for new_card in map[card.id]:
+            to_visit.append(new_card)
 
     end = time.time()
 
-    logger.info((mid-start, end-mid, end-start))
+    logger.info((mid - start, end - mid, end - start))
 
-    return len(visited)
+    return visited
