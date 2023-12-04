@@ -37,7 +37,7 @@ def part1(i):
     return int(points)
 
 
-def part2(i):
+def part2(i): #TODO make faster
     cards = parse_cards(i)
     to_visit = list(cards.values())
     visited = []
