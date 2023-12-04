@@ -1,5 +1,7 @@
-from collections import namedtuple
+import time
 
+from collections import namedtuple
+from loguru import logger
 
 Card = namedtuple("Card", "id, num_won")
 
@@ -37,7 +39,8 @@ def part1(i):
     return int(points)
 
 
-def part2(i): #TODO make faster
+def part2(i):  # TODO make faster
+    start = time.time()
     cards = parse_cards(i)
     to_visit = list(cards.values())
     visited = []
@@ -47,11 +50,17 @@ def part2(i): #TODO make faster
             {c.id: [cards[num] for num in range(c.id + 1, c.id + c.num_won + 1)]}
         )
 
+    mid = time.time()
+
     while len(to_visit) > 0:
         card = to_visit[-1]
         new_to_visit = map[card.id]
         visited.append(card)
         to_visit.pop()
         to_visit.extend(new_to_visit)
+
+    end = time.time()
+
+    logger.info((mid-start, end-mid, end-start))
 
     return len(visited)
