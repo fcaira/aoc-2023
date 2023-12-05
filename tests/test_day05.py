@@ -1,9 +1,8 @@
 import pytest
 
-from loguru import logger
 from typing import List, Union
 
-from solutions.day05 import parse_map, parse_maps, part1, part2
+from solutions.day05 import parse_map, parse_maps, part1, part2, convert
 from tests.conftest import get_input
 
 day = "05"
@@ -12,13 +11,11 @@ input = get_input(f"solutions/inputs/{day}", split="\n\n")
 
 
 def test_parse_map():
-    seed_to_soil_map = parse_map("seed-to-soil map:\n50 98 2\n52 50 48")["seed-to-soil"]
-    assert seed_to_soil_map[50] == 52
-    assert seed_to_soil_map[51] == 53
-    assert seed_to_soil_map[96] == 98
-    assert seed_to_soil_map[97] == 99
-    assert seed_to_soil_map[98] == 50
-    assert seed_to_soil_map[99] == 51
+    seed_to_soil_map = parse_map("seed-to-soil map:\n50 98 2\n52 50 48")
+    assert seed_to_soil_map["seed-to-soil"] == {
+        range(50, 98): +2,
+        range(98, 100): -48,
+    }
 
 
 def test_parse_maps():
@@ -43,11 +40,19 @@ def test_parse_maps():
         assert "humidity-to-location" in all_maps
 
 
+def test_convert():
+    map = parse_map("seed-to-soil map:\n50 98 2\n52 50 48")["seed-to-soil"]
+    assert convert(79, map) == 81
+    assert convert(14, map) == 14
+    assert convert(55, map) == 57
+    assert convert(13, map) == 13
+
+
 @pytest.mark.parametrize(
     argnames="input, expected_output",
     argvalues=[
         (eg_input, 35),
-        (input, 0),
+        (input, 379811651),
     ],
     ids=["eg", "ans"],
 )
