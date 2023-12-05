@@ -12,10 +12,10 @@ input = get_input(f"solutions/inputs/{day}", split="\n\n")
 
 def test_parse_map():
     seed_to_soil_map = parse_map("seed-to-soil map:\n50 98 2\n52 50 48")
-    assert seed_to_soil_map["seed-to-soil"] == {
-        range(50, 98): +2,
-        range(98, 100): -48,
-    }
+    assert set(seed_to_soil_map["seed-to-soil"]) == set([
+        (range(50, 98), +2),
+        (range(98, 100), -48),
+    ])
 
 
 def test_parse_maps():
@@ -30,14 +30,13 @@ def test_parse_maps():
             "humidity-to-location map:\n60 56 37\n56 93 4",
         ]
     )
-    for map in all_maps:
-        assert "seed-to-soil" in all_maps
-        assert "soil-to-fertilizer" in all_maps
-        assert "fertilizer-to-water" in all_maps
-        assert "water-to-light" in all_maps
-        assert "light-to-temperature" in all_maps
-        assert "temperature-to-humidity" in all_maps
-        assert "humidity-to-location" in all_maps
+    assert "seed-to-soil" in all_maps
+    assert "soil-to-fertilizer" in all_maps
+    assert "fertilizer-to-water" in all_maps
+    assert "water-to-light" in all_maps
+    assert "light-to-temperature" in all_maps
+    assert "temperature-to-humidity" in all_maps
+    assert "humidity-to-location" in all_maps
 
 
 def test_convert():
