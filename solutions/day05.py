@@ -1,5 +1,5 @@
 from math import inf
-
+from collections import deque
 from typing import List, Tuple
 
 
@@ -42,5 +42,35 @@ def part1(i):
     return min_location
 
 
+def parse_seeds(seeds_line: str):
+    parsed_seeds = deque()
+    seed_parts = deque(seeds_line.split()[1:])
+    while seed_parts:
+        start = int(seed_parts.popleft())
+        diff = int(seed_parts.popleft())
+        parsed_seeds.append(range(start, start + diff))
+    return parsed_seeds
+
+
 def part2(i):
-    return
+    seeds_raw = i[0]
+    seed_lines = seeds_raw.split("\n")
+
+    # seeds = range(seeds_raw[0], seeds_raw[0]+ seeds_raw[1])
+    maps = parse_maps(i[1:])
+    min_location = inf
+
+    for seed_line in seed_lines:
+        seed_ranges = parse_seeds(seed_line)
+        for seed_range in seed_ranges:
+            for seed in seed_range:
+                soil = convert(seed, maps["seed-to-soil"])
+                fertilizer = convert(soil, maps["soil-to-fertilizer"])
+                water = convert(fertilizer, maps["fertilizer-to-water"])
+                light = convert(water, maps["water-to-light"])
+                temperature = convert(light, maps["light-to-temperature"])
+                humidity = convert(temperature, maps["temperature-to-humidity"])
+                location = convert(humidity, maps["humidity-to-location"])
+                if location < min_location:
+                    min_location = location
+    return min_location

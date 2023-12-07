@@ -1,8 +1,8 @@
 import pytest
 
+from collections import deque
 from typing import List, Union
-
-from solutions.day05 import parse_map, parse_maps, part1, part2, convert
+from solutions.day05 import parse_map, parse_maps, convert, part1, parse_seeds, part2
 from tests.conftest import get_input
 
 day = "05"
@@ -12,10 +12,12 @@ input = get_input(f"solutions/inputs/{day}", split="\n\n")
 
 def test_parse_map():
     seed_to_soil_map = parse_map("seed-to-soil map:\n50 98 2\n52 50 48")
-    assert set(seed_to_soil_map["seed-to-soil"]) == set([
-        (range(50, 98), +2),
-        (range(98, 100), -48),
-    ])
+    assert set(seed_to_soil_map["seed-to-soil"]) == set(
+        [
+            (range(50, 98), +2),
+            (range(98, 100), -48),
+        ]
+    )
 
 
 def test_parse_maps():
@@ -59,13 +61,22 @@ def test_part1(input: List[str], expected_output: Union[str, int]):
     assert part1(input) == expected_output
 
 
-# @pytest.mark.parametrize(
-#     argnames="input, expected_output",
-#     argvalues=[
-#         (eg_input, 0),
-#         (input, 0),
-#     ],
-#     ids=["eg", "ans"],
-# )
-# def test_part2(input: List[str], expected_output: Union[str, int]):
-#     assert part2(input) == expected_output
+def test_parse_seeds():
+    assert parse_seeds("seeds: 79 14 55 13") == deque(
+        [
+            range(79, 93),
+            range(55, 68),
+        ]
+    )
+
+
+@pytest.mark.parametrize(
+    argnames="input, expected_output",
+    argvalues=[
+        (eg_input, 46),
+        (input, 0),
+    ],
+    ids=["eg", "ans"],
+)
+def test_part2(input: List[str], expected_output: Union[str, int]):
+    assert part2(input) == expected_output
