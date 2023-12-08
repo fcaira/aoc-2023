@@ -6,6 +6,7 @@ from solutions.day07 import (
     part1,
     part2,
     add_ordering,
+    add_ordering_pt2,
 )
 from tests.conftest import get_input
 
@@ -36,11 +37,21 @@ def test_part1(input: List[str], expected_output: Union[str, int]):
     assert part1(input) == expected_output
 
 
+def test_add_ordering_pt2():
+    assert add_ordering_pt2(eg_input) == [
+        ("32T3K", 765, [2, 3, 2, 10, 3, 12]),
+        ("T55J5", 684, [6, 10, 5, 5, 1, 5]),
+        ("KK677", 28, [3, 12, 12, 6, 7, 7]),
+        ("KTJJT", 220, [6, 12, 10, 1, 1, 10]),
+        ("QQQJA", 483, [6, 11, 11, 11, 1, 13]),
+    ]
+
+
 @pytest.mark.parametrize(
     argnames="input, expected_output",
     argvalues=[
-        (eg_input, 0),
-        (input, 0),
+        (eg_input, 5905),
+        (input, 246894760),
     ],
     ids=["eg", "ans"],
 )

@@ -1,5 +1,4 @@
 from collections import Counter
-
 from typing import List, Dict
 
 
@@ -70,5 +69,67 @@ def part1(i: List[str]):
     )
 
 
+def first_order_pt2(hand: str):
+    labels = ["A", "K", "Q", "T", "9", "8", "7", "6", "5", "4", "3", "2", "J"]
+    translator = dict(zip(labels, [num for num in range(len(labels), 0, -1)]))
+    if "J" in hand:
+        count = Counter(hand)
+        del count["J"]
+        max_chars = [key for key in count if count[key] == max(count.values())]
+        if max_chars:
+            if len(max_chars) > 1:
+                options = sorted(
+                    max_chars,
+                    key=lambda x: translator[x],
+                )
+                best_val_char = options[-1]
+            else:
+                best_val_char = max_chars[0]
+        else:
+            best_val_char = labels[0]
+        hand = hand.replace("J", best_val_char)
+    count = Counter(hand)
+    set_count = set(count.values())
+    if set_count == {5}:
+        order = 7  # Five of a kind (e.g. AAAAA)
+    elif set_count == {1, 4}:
+        order = 6  # Four of a kind (e.g. AA8AA)
+    elif set_count == {2, 3}:
+        order = 5  # Full house (e.g. 23332)
+    elif set_count == {1, 3}:
+        order = 4  # Three of a kind (e.g. TTT98)
+    elif set_count == {1, 2}:
+        if len(count) == 3:
+            order = 3  # Two pair (e.g. 23432)
+        else:
+            order = 2  # One pair (e.g. A23A4)
+    elif set_count == {1}:
+        order = 1  # High card (e.g. 23456)
+    return order
+
+
+def second_order_pt2(hand: str, translator: Dict[str, int]):
+    """
+    Converts hand into a list of ints for ordering
+    e.g. "A" maps to 13; "2" maps to 1
+    Therefore "32T3K" maps to [2, 1, 9, 2, 12]
+    """
+    return [translator[char] for char in hand]
+
+
+def add_ordering_pt2(hands: List[str]):
+    labels = ["A", "K", "Q", "T", "9", "8", "7", "6", "5", "4", "3", "2", "J"]
+    translator = dict(zip(labels, [num for num in range(len(labels), 0, -1)]))
+    return [
+        (hand, int(bet), [first_order_pt2(hand)] + second_order_pt2(hand, translator))
+        for hand, bet in (ln.split() for ln in hands)
+    ]
+
+
 def part2(i):
-    return
+    return sum(
+        rank * bet
+        for rank, (_, bet, _) in enumerate(
+            sorted(add_ordering_pt2(i), key=lambda x: x[2]), start=1
+        )
+    )
