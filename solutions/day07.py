@@ -1,6 +1,26 @@
 from collections import Counter
 from typing import List, Dict
 
+PART1_LABELS = ["A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2"]
+PART2_LABELS = ["A", "K", "Q", "T", "9", "8", "7", "6", "5", "4", "3", "2", "J"]
+
+
+def deal_with_jokers(hand: str, translator: Dict[str, int]):
+    """
+    Checks for jokers ("J") in the hand, replaces them with the
+    most common (count[x]) AND highest value (translator[x]) other character in the hand
+    (defaulting to the most valuable character "A" in the edge case of "JJJJJ")
+    """
+    if "J" in hand:
+        count = Counter(hand)
+        del count["J"]
+        max_chars = [key for key in count if count[key] == max(count.values())]
+        best_val_char = max(
+            count, key=lambda x: (count[x], translator[x]), default=min(translator)
+        )
+        hand = hand.replace("J", best_val_char)
+    return hand
+
 
 def first_order(hand: str):
     """
@@ -11,23 +31,17 @@ def first_order(hand: str):
     Length is 4 (there are 4 distinct chars), so must be one pair; the order is 2
     """
     count = Counter(hand)
-    set_count = set(count.values())
-    if set_count == {5}:
-        order = 7  # Five of a kind (e.g. AAAAA)
-    elif set_count == {1, 4}:
-        order = 6  # Four of a kind (e.g. AA8AA)
-    elif set_count == {2, 3}:
-        order = 5  # Full house (e.g. 23332)
-    elif set_count == {1, 3}:
-        order = 4  # Three of a kind (e.g. TTT98)
-    elif set_count == {1, 2}:
-        if len(count) == 3:
-            order = 3  # Two pair (e.g. 23432)
-        else:
-            order = 2  # One pair (e.g. A23A4)
-    elif set_count == {1}:
-        order = 1  # High card (e.g. 23456)
-    return order
+    count_values_set = frozenset(count.values())
+    order_map = {
+        frozenset([5]): 7,  # Five of a kind (e.g. AAAAA)
+        frozenset([1, 4]): 6,  # Four of a kind (e.g. AA8AA)
+        frozenset([2, 3]): 5,  # Full house (e.g. 23332)
+        frozenset([1, 3]): 4,  # Three of a kind (e.g. TTT98)
+        frozenset([1]): 1,  # High card (e.g. 23456)
+    }
+    return order_map.get(
+        count_values_set, 3 if len(count) == 3 else 2
+    )  # Two pair (e.g. 23432) or One pair (e.g. A23A4)
 
 
 def second_order(hand: str, translator: Dict[str, int]):
@@ -39,15 +53,24 @@ def second_order(hand: str, translator: Dict[str, int]):
     return [translator[char] for char in hand]
 
 
-def add_ordering(hands: List[str]):
+def add_ordering(hands: List[str], labels: List[str], jokers: bool = False):
     """
     Takes the list of hand-bet lines, creates a tuple,
     adding a list of orders (first, then second)
     e.g. "32T3K 765" turns into ("32T3K", 765, [2, 2, 1, 9, 2, 12])
     where the first int is the first order, and the subsequent 5 are the second order
     """
-    labels = ["A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2"]
-    translator = dict(zip(labels, [num for num in range(len(labels), 0, -1)]))
+    translator = {label: num for label, num in zip(labels, range(len(labels), 0, -1))}
+    if jokers:
+        return [
+            (
+                hand,
+                int(bet),
+                [first_order(deal_with_jokers(hand, translator))]
+                + second_order(hand, translator),
+            )
+            for hand, bet in (ln.split() for ln in hands)
+        ]
     return [
         (hand, int(bet), [first_order(hand)] + second_order(hand, translator))
         for hand, bet in (ln.split() for ln in hands)
@@ -64,72 +87,22 @@ def part1(i: List[str]):
     return sum(
         rank * bet
         for rank, (_, bet, _) in enumerate(
-            sorted(add_ordering(i), key=lambda x: x[2]), start=1
+            sorted(add_ordering(i, PART1_LABELS), key=lambda x: x[2]), start=1
         )
     )
 
 
-def first_order_pt2(hand: str):
-    labels = ["A", "K", "Q", "T", "9", "8", "7", "6", "5", "4", "3", "2", "J"]
-    translator = dict(zip(labels, [num for num in range(len(labels), 0, -1)]))
-    if "J" in hand:
-        count = Counter(hand)
-        del count["J"]
-        max_chars = [key for key in count if count[key] == max(count.values())]
-        if max_chars:
-            if len(max_chars) > 1:
-                options = sorted(
-                    max_chars,
-                    key=lambda x: translator[x],
-                )
-                best_val_char = options[-1]
-            else:
-                best_val_char = max_chars[0]
-        else:
-            best_val_char = labels[0]
-        hand = hand.replace("J", best_val_char)
-    count = Counter(hand)
-    set_count = set(count.values())
-    if set_count == {5}:
-        order = 7  # Five of a kind (e.g. AAAAA)
-    elif set_count == {1, 4}:
-        order = 6  # Four of a kind (e.g. AA8AA)
-    elif set_count == {2, 3}:
-        order = 5  # Full house (e.g. 23332)
-    elif set_count == {1, 3}:
-        order = 4  # Three of a kind (e.g. TTT98)
-    elif set_count == {1, 2}:
-        if len(count) == 3:
-            order = 3  # Two pair (e.g. 23432)
-        else:
-            order = 2  # One pair (e.g. A23A4)
-    elif set_count == {1}:
-        order = 1  # High card (e.g. 23456)
-    return order
-
-
-def second_order_pt2(hand: str, translator: Dict[str, int]):
-    """
-    Converts hand into a list of ints for ordering
-    e.g. "A" maps to 13; "2" maps to 1
-    Therefore "32T3K" maps to [2, 1, 9, 2, 12]
-    """
-    return [translator[char] for char in hand]
-
-
-def add_ordering_pt2(hands: List[str]):
-    labels = ["A", "K", "Q", "T", "9", "8", "7", "6", "5", "4", "3", "2", "J"]
-    translator = dict(zip(labels, [num for num in range(len(labels), 0, -1)]))
-    return [
-        (hand, int(bet), [first_order_pt2(hand)] + second_order_pt2(hand, translator))
-        for hand, bet in (ln.split() for ln in hands)
-    ]
-
-
 def part2(i):
+    """
+    Adds ordering to the hand-bet lines, dealing with jokers as an added complication,
+    resulting in a list of tuples,
+    then sorts the list of tuples according to the ordering
+    then uses enumerate to find the rank (must start at 1!),
+    and calculates the rank * bet
+    """
     return sum(
         rank * bet
         for rank, (_, bet, _) in enumerate(
-            sorted(add_ordering_pt2(i), key=lambda x: x[2]), start=1
+            sorted(add_ordering(i, PART2_LABELS, True), key=lambda x: x[2]), start=1
         )
     )
