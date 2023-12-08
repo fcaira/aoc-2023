@@ -18,7 +18,7 @@ def deal_with_jokers(hand: str, translator: Dict[str, int]):
         best_val_char = max(
             count, key=lambda x: (count[x], translator[x]), default=min(translator)
         )
-        hand = hand.replace("J", best_val_char)
+        return hand.replace("J", best_val_char)
     return hand
 
 
