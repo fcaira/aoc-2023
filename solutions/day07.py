@@ -14,21 +14,21 @@ def first_order(hand: str):
     count = Counter(hand)
     set_count = set(count.values())
     if set_count == {5}:
-        ord = 7  # Five of a kind (e.g. AAAAA)
+        order = 7  # Five of a kind (e.g. AAAAA)
     elif set_count == {1, 4}:
-        ord = 6  # Four of a kind (e.g. AA8AA)
+        order = 6  # Four of a kind (e.g. AA8AA)
     elif set_count == {2, 3}:
-        ord = 5  # Full house (e.g. 23332)
+        order = 5  # Full house (e.g. 23332)
     elif set_count == {1, 3}:
-        ord = 4  # Three of a kind (e.g. TTT98)
+        order = 4  # Three of a kind (e.g. TTT98)
     elif set_count == {1, 2}:
         if len(count) == 3:
-            ord = 3  # Two pair (e.g. 23432)
+            order = 3  # Two pair (e.g. 23432)
         else:
-            ord = 2  # One pair (e.g. A23A4)
+            order = 2  # One pair (e.g. A23A4)
     elif set_count == {1}:
-        ord = 1  # High card (e.g. 23456)
-    return ord
+        order = 1  # High card (e.g. 23456)
+    return order
 
 
 def second_order(hand: str, translator: Dict[str, int]):
