@@ -13,8 +13,7 @@ def deal_with_jokers(hand: str, translator: Dict[str, int]):
     """
     if "J" in hand:
         count = Counter(hand)
-        del count["J"]
-        max_chars = [key for key in count if count[key] == max(count.values())]
+        del count["J"] # to avoid replacing J with J
         best_val_char = max(
             count, key=lambda x: (count[x], translator[x]), default=min(translator)
         )
