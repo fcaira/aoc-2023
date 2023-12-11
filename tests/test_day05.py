@@ -6,12 +6,10 @@ from solutions.day05 import (
     parse_map,
     parse_maps,
     convert,
-    convert_pt2,
+    parse_seed_range,
+    convert_ranges,
     part1,
-    parse_seeds,
-    overlap,
     part2,
-    part2_opt,
 )
 from tests.conftest import get_input
 
@@ -72,7 +70,7 @@ def test_part1(input: List[str], expected_output: Union[str, int]):
 
 
 def test_parse_seeds():
-    assert parse_seeds("seeds: 79 14 55 13") == deque(
+    assert parse_seed_range("seeds: 79 14 55 13") == deque(
         [
             range(79, 93),
             range(55, 68),
@@ -80,16 +78,11 @@ def test_parse_seeds():
     )
 
 
-def test_overlap():
-    assert overlap(range(30, 50), range(40, 60)) == range(40, 50)
-    assert overlap(range(50, 70), range(10, 30)) == None
-
-
 @pytest.mark.parametrize(
     argnames="input, expected_output",
     argvalues=[
         (eg_input, 46),
-        (input, 0),
+        (input, 27992443),
     ],
     ids=["eg", "ans"],
 )
@@ -98,24 +91,11 @@ def test_part2(input: List[str], expected_output: Union[str, int]):
 
 
 @pytest.mark.parametrize(
-    argnames="input, expected_output",
-    argvalues=[
-        (eg_input, 46),
-        (input, 0),
-    ],
-    ids=["eg", "ans"],
-)
-def test_part2_opt(input: List[str], expected_output: Union[str, int]):
-    assert part2_opt(input) == expected_output
-
-
-@pytest.mark.parametrize(
-    argnames="category_ranges, conversion_map, expected_range_output, expected_output",
+    argnames="category_ranges, conversion_map, expected_output",
     argvalues=[
         (
             deque([range(55, 68), range(79, 93)]),
             deque([(range(50, 98), 2), (range(98, 100), -48)]),
-            deque([range(57, 70), range(81, 95)]),
             sorted(
                 [
                     57,
@@ -151,7 +131,6 @@ def test_part2_opt(input: List[str], expected_output: Union[str, int]):
         (
             deque([range(81, 95), range(57, 70)]),
             deque([(range(0, 15), 39), (range(15, 52), -15), (range(52, 54), -15)]),
-            deque([range(57, 70), range(81, 95)]),
             sorted(
                 [
                     57,
@@ -194,13 +173,6 @@ def test_part2_opt(input: List[str], expected_output: Union[str, int]):
                     (range(53, 61), -4),
                 ]
             ),
-            deque(
-                [
-                    range(53, 57),
-                    range(61, 70),
-                    range(81, 95),
-                ]
-            ),
             sorted(
                 [
                     53,
@@ -236,13 +208,6 @@ def test_part2_opt(input: List[str], expected_output: Union[str, int]):
         (
             deque([range(53, 57), range(81, 95), range(61, 70)]),
             deque([(range(18, 25), 70), (range(25, 95), -7)]),
-            deque(
-                [
-                    range(46, 50),
-                    range(54, 63),
-                    range(74, 88),
-                ]
-            ),
             sorted(
                 [
                     46,
@@ -278,14 +243,6 @@ def test_part2_opt(input: List[str], expected_output: Union[str, int]):
         (
             deque([range(54, 63), range(74, 88), range(46, 50)]),
             deque([(range(77, 100), -32), (range(45, 64), 36), (range(64, 77), 4)]),
-            deque(
-                [
-                    range(45, 56),
-                    range(78, 81),
-                    range(82, 86),
-                    range(90, 99),
-                ]
-            ),
             sorted(
                 [
                     45,
@@ -321,14 +278,6 @@ def test_part2_opt(input: List[str], expected_output: Union[str, int]):
         (
             deque([range(82, 86), range(45, 56), range(90, 99), range(78, 81)]),
             deque([(range(69, 70), -69), (range(0, 69), 1)]),
-            deque(
-                [
-                    range(46, 57),
-                    range(78, 81),
-                    range(82, 86),
-                    range(90, 99),
-                ]
-            ),
             sorted(
                 [
                     46,
@@ -364,14 +313,6 @@ def test_part2_opt(input: List[str], expected_output: Union[str, int]):
         (
             deque([range(78, 81), range(90, 99), range(46, 57), range(82, 86)]),
             deque([(range(56, 93), 4), (range(93, 97), -37)]),
-            deque(
-                [
-                    range(46, 61),
-                    range(82, 85),
-                    range(86, 90),
-                    range(94, 99),
-                ]
-            ),
             sorted(
                 [
                     46,
@@ -415,17 +356,9 @@ def test_part2_opt(input: List[str], expected_output: Union[str, int]):
         "humidity-to-location",
     ],
 )
-def test_convert_pt2(
-    category_ranges, conversion_map, expected_range_output, expected_output
-):
-    result = convert_pt2(category_ranges, conversion_map)
-    # assert sorted(result, key=lambda r: r.start) == sorted(
-        # expected_range_output, key=lambda r: r.start
-    # )
+def test_convert_pt2(category_ranges, conversion_map, expected_output):
+    result = convert_ranges(category_ranges, conversion_map)
     assert (
         sorted(num for num_list in (list(r) for r in result) for num in num_list)
         == expected_output
     )
-
-
-# {'seed-to-soil': sorted([81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69]), 'soil-to-fertilizer': sorted([81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69]), 'fertilizer-to-water': sorted([81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 53, 54, 55, 56, 61, 62, 63, 64, 65, 66, 67, 68, 69]), 'water-to-light': sorted([74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 46, 47, 48, 49, 54, 55, 56, 57, 58, 59, 60, 61, 62]), 'light-to-temperature': sorted([78, 79, 80, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 82, 83, 84, 85, 90, 91, 92, 93, 94, 95, 96, 97, 98]), 'temperature-to-humidity': [78, 79, 80, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 82, 83, 84, 85, 90, 91, 92, 93, 94, 95, 96, 97, 98], 'humidity-to-location': sorted([82, 83, 84, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 60, 86, 87, 88, 89, 94, 95, 96, 56, 57, 58, 59, 97, 98])}

@@ -1,10 +1,10 @@
 from collections import deque
 from loguru import logger
 from math import inf
-from typing import List, Tuple, Union, Set, Deque
+from typing import List, Tuple, Deque
 
 
-def parse_map(raw_map):
+def parse_map(raw_map: str):
     lines = raw_map.split("\n")
     conversion = lines[0].split()[0]
     range_map = deque(
@@ -19,7 +19,7 @@ def parse_maps(raw_maps: List[str]):
     return {k: v for raw_map in raw_maps for k, v in parse_map(raw_map).items()}
 
 
-def convert(category: int, conversion_map: Tuple[range, int]):
+def convert(category: int, conversion_map: Deque[Tuple[range, int]]):
     for range, diff in conversion_map:
         if category in range:
             new_val = category + diff
@@ -47,7 +47,7 @@ def part1(i):
     return min_location
 
 
-def parse_seeds(seeds_line: str):
+def parse_seed_range(seeds_line: str):
     parsed_seeds = deque()
     seed_parts = deque(seeds_line.split()[1:])
     idx = 0
@@ -60,25 +60,10 @@ def parse_seeds(seeds_line: str):
     return parsed_seeds
 
 
-def overlap(range_a: range, range_b: range) -> Union[range, None]:
-    overlap_start = max(range_a.start, range_b.start)
-    overlap_stop = min(range_a.stop, range_b.stop)
-    if overlap_start <= overlap_stop:
-        return range(overlap_start, overlap_stop)
-    return None
-
-
-def convert_pt2(
+def convert_ranges(
     category_ranges: Deque[range], conversion_map: Deque[Tuple[range, int]]
 ):
-    expected_numbers = sum(len(r) for r in category_ranges)
-
     output_ranges = deque()
-    # min_bound = inf
-    # max_bound = 0
-    # unmapped_ranges = set()
-    # for idx, range in enumerate(category_ranges):
-    #     if range.stop != range[idx+1].start:
 
     while category_ranges:
         category_range = category_ranges.pop()
@@ -88,7 +73,7 @@ def convert_pt2(
                 category_range.start not in conversion_range
                 and (category_range.stop - 1) not in conversion_range
             ):
-                if conversion_range == conversion_map[-1][0]:
+                if conversion_range == conversion_map[-1][0]:  # last
                     output_ranges.append(category_range)
                 continue
 
@@ -116,7 +101,6 @@ def convert_pt2(
                     )
                 break
 
-            # ( cat [ ) conv ]
             elif (
                 category_range.start not in conversion_range
                 and (category_range.stop - 1) in conversion_range
@@ -129,76 +113,18 @@ def convert_pt2(
                 )
                 break
 
-            # ( cat )[ conv ] //
-            # elif (
-            #     category_range.stop == conversion_range.start
-            # ):
-            #     category_ranges.appendleft(
-            #         range(category_range.start, conversion_range.start)
-            #     )
-            #     output_ranges.append(
-            #         range(category_range.start, conversion_range.start + diff)
-            #     )
-
-            # # [ conv ]( cat )
-            # elif conversion_range.stop == category_range.start
-            #     # output_ranges.add(
-            #     #     range(conversion_range.start + diff, category_range.stop + diff)
-            #     # )
-
-    # if sum(len(r) for r in output_ranges) != expected_numbers:
-    #     raise Exception(f"Lengths don't match, should be {expected_numbers} numbers")
     return output_ranges
 
 
 def part2(i):
     seed_line = i[0].split("\n")[0]
-    seed_ranges = parse_seeds(seed_line)
+    seed_range = parse_seed_range(seed_line)
     maps = parse_maps(i[1:])
-    min_location = inf
-    nums = {
-        "seed-to-soil": [],
-        "soil-to-fertilizer": [],
-        "fertilizer-to-water": [],
-        "water-to-light": [],
-        "light-to-temperature": [],
-        "temperature-to-humidity": [],
-        "humidity-to-location": [],
-    }
-    for seed_range in seed_ranges:
-        for idx, seed in enumerate(seed_range):
-            logger.info(f"{seed} {seed_range}")
-            # logger.info(idx)
-            soil = convert(seed, maps["seed-to-soil"])
-            nums["seed-to-soil"].append(soil)
-            fertilizer = convert(soil, maps["soil-to-fertilizer"])
-            nums["soil-to-fertilizer"].append(fertilizer)
-            water = convert(fertilizer, maps["fertilizer-to-water"])
-            nums["fertilizer-to-water"].append(water)
-            light = convert(water, maps["water-to-light"])
-            nums["water-to-light"].append(light)
-            temperature = convert(light, maps["light-to-temperature"])
-            nums["light-to-temperature"].append(temperature)
-            humidity = convert(temperature, maps["temperature-to-humidity"])
-            nums["temperature-to-humidity"].append(humidity)
-            location = convert(humidity, maps["humidity-to-location"])
-            nums["humidity-to-location"].append(location)
-            if location < min_location:
-                min_location = location
-
-    logger.info(nums)
-    return min_location
-
-
-def part2_opt(i):
-    seed_line = i[0].split("\n")[0]
-    seed_range = parse_seeds(seed_line)
-    maps = parse_maps(i[1:])
-    soil_range = convert_pt2(seed_range, maps["seed-to-soil"])
-    fertilizer_range = convert_pt2(soil_range, maps["soil-to-fertilizer"])
-    water_range = convert_pt2(fertilizer_range, maps["fertilizer-to-water"])
-    light_range = convert_pt2(water_range, maps["water-to-light"])
-    temperature_range = convert_pt2(light_range, maps["light-to-temperature"])
-    humidity_range = convert_pt2(temperature_range, maps["temperature-to-humidity"])
-    location_range = convert_pt2(humidity_range, maps["humidity-to-location"])
+    soil_range = convert_ranges(seed_range, maps["seed-to-soil"])
+    fertilizer_range = convert_ranges(soil_range, maps["soil-to-fertilizer"])
+    water_range = convert_ranges(fertilizer_range, maps["fertilizer-to-water"])
+    light_range = convert_ranges(water_range, maps["water-to-light"])
+    temperature_range = convert_ranges(light_range, maps["light-to-temperature"])
+    humidity_range = convert_ranges(temperature_range, maps["temperature-to-humidity"])
+    location_range = convert_ranges(humidity_range, maps["humidity-to-location"])
     return min(r.start for r in location_range)
