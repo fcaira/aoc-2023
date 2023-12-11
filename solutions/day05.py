@@ -72,7 +72,7 @@ def convert_pt2(
     category_ranges: Deque[range], conversion_map: Deque[Tuple[range, int]]
 ):
     expected_numbers = sum(len(r) for r in category_ranges)
-    
+
     output_ranges = deque()
     # min_bound = inf
     # max_bound = 0
@@ -86,7 +86,7 @@ def convert_pt2(
             # ( cat ) [ conv  ]
             if (
                 category_range.start not in conversion_range
-                and category_range.stop not in conversion_range
+                and (category_range.stop - 1) not in conversion_range
             ):
                 if conversion_range == conversion_map[-1][0]:
                     output_ranges.append(category_range)
@@ -95,7 +95,7 @@ def convert_pt2(
             #  [ conv ( cat ) ]
             elif (
                 category_range.start in conversion_range
-                and category_range.stop in conversion_range
+                and (category_range.stop - 1) in conversion_range
             ):
                 output_ranges.append(
                     range(category_range.start + diff, category_range.stop + diff)
@@ -105,32 +105,33 @@ def convert_pt2(
             # [ conv ( cat ] )
             elif (
                 category_range.start in conversion_range
-                and category_range.stop not in conversion_range
+                and (category_range.stop - 1) not in conversion_range
             ):
                 output_ranges.append(
                     range(category_range.start + diff, conversion_range.stop + diff)
                 )
-                category_ranges.appendleft(
-                    range(conversion_range.stop, category_range.stop)
-                )
+                if conversion_range.stop != category_range.stop:
+                    category_ranges.appendleft(
+                        range(conversion_range.stop, category_range.stop)
+                    )
                 break
 
             # ( cat [ ) conv ]
             elif (
                 category_range.start not in conversion_range
-                and category_range.stop in conversion_range
+                and (category_range.stop - 1) in conversion_range
             ):
                 category_ranges.appendleft(
-                    range(category_range.start, conversion_range.start - 1)
+                    range(category_range.start, conversion_range.start)
                 )
                 output_ranges.append(
-                    range(category_range.start, conversion_range.start + diff)
+                    range(conversion_range.start + diff, category_range.stop + diff)
                 )
                 break
 
             # ( cat )[ conv ] //
             # elif (
-            #     category_range.stop == conversion_range.start 
+            #     category_range.stop == conversion_range.start
             # ):
             #     category_ranges.appendleft(
             #         range(category_range.start, conversion_range.start)
@@ -191,7 +192,7 @@ def part2(i):
 
 def part2_opt(i):
     seed_line = i[0].split("\n")[0]
-    seed_range = set(parse_seeds(seed_line))
+    seed_range = parse_seeds(seed_line)
     maps = parse_maps(i[1:])
     soil_range = convert_pt2(seed_range, maps["seed-to-soil"])
     fertilizer_range = convert_pt2(soil_range, maps["soil-to-fertilizer"])
@@ -200,4 +201,4 @@ def part2_opt(i):
     temperature_range = convert_pt2(light_range, maps["light-to-temperature"])
     humidity_range = convert_pt2(temperature_range, maps["temperature-to-humidity"])
     location_range = convert_pt2(humidity_range, maps["humidity-to-location"])
-    return min(num for num_range in location_range for num in num_range)
+    return min(r.start for r in location_range)
