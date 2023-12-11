@@ -1,0 +1,123 @@
+Public Class Hand
+        Dim CheckString As String = "AKQJT98765432"
+
+        Private _Data As String
+
+        Property Data As String
+            Get
+                Return _Data
+            End Get
+            Set
+                _Data = Value
+                Cards = _Data.Split(" ")(0)
+                BidAmount = _Data.Split(" ")(1)
+                RankCards()
+                Entropy()
+            End Set
+        End Property
+
+        Property Cards As String
+        Property CardRanks As New List(Of String)
+        Property BidAmount As Integer
+        Property Cardvals As String
+        Property TypeOfHand As String
+        Property TypeWeight As Byte
+        Property Rank As Integer
+        Function RankCards() As String
+            For i = 0 To 4
+                CardRanks.Add(InStr(CheckString, Cards(i)))
+            Next
+        End Function
+        Function HandType()
+            'All cards the same
+            If InStr(Cardvals, "5") <> 0 Then
+                TypeOfHand = "Five of a kind"
+                TypeWeight = 6
+
+                'Four cards the same
+            ElseIf InStr(Cardvals, "4") <> 0 Then
+                TypeOfHand = "Four of a kind"
+                TypeWeight = 5
+            ElseIf InStr(Cardvals, "3") <> 0 Then
+                If InStr(Cardvals, "2") <> 0 Then
+                    TypeOfHand = "Full House"
+                    TypeWeight = 4
+                Else
+                    TypeOfHand = "Three of a Kind"
+                    TypeWeight = 3
+                End If
+            Else
+                Select Case Cardvals.Split("2").Length
+                    Case 3
+                        TypeOfHand = "Two Pair"
+                        TypeWeight = 2
+                    Case 2
+                        TypeOfHand = "One Pair"
+                        TypeWeight = 1
+                    Case 1
+                        TypeOfHand = "High Card"
+                        TypeWeight = 0
+                End Select
+            End If
+
+        End Function
+        Function Entropy() As Integer
+            'Returns 5 if 5 cards the same, 4, 3.2, 3, 2.2,2,1
+
+            For Each a In CheckString
+                CardVals = CardVals & Cards.Split(a).Length - 1
+            Next
+            HandType()
+        End Function
+    End Class
+
+Public Sub Day7()
+        Dim mydata As New List(Of String)
+        mydata = AOC2023.inputdata("D:\Advent Of Code Data\2023\Day 7\Puzzle 7a.txt")
+        Dim hands As New List(Of Hand)
+        For Each m In mydata
+            Dim h As New Hand
+            h.Data = m
+            hands.Add(h)
+        Next
+        Dim c As New CompareByType
+        hands.Sort(c)
+
+        Dim total As Integer
+        For i = 0 To hands.Count - 1
+            hands(i).Rank = i + 1
+            total += hands(i).Rank * hands(i).BidAmount
+        Next
+
+    End Sub
+
+Public Class CompareByType
+        Implements Generic.IComparer(Of Hand)
+
+        Public Function Compare(x As Hand, y As Hand) As Integer Implements IComparer(Of Hand).Compare
+            If x.TypeWeight > y.TypeWeight Then
+                Return 1
+            ElseIf x.TypeWeight < y.TypeWeight Then
+                Return -1
+            Else
+                Dim i As Integer
+                While TestRank(x, y, i) = 0 And i < 4
+                    i += 1
+                End While
+                Return TestRank(x, y, i)
+            End If
+        End Function
+
+        Function TestRank(x As Hand, y As Hand, i As Integer) As Integer
+            If x.CardRanks(i) > y.CardRanks(i) Then
+                Return -1
+            ElseIf x.CardRanks(i) < y.CardRanks(i) Then
+                Return 1
+            Else
+                Return 0
+            End If
+
+
+        End Function
+    End Class
+
