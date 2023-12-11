@@ -79,6 +79,58 @@ def test_parse_seeds():
 
 
 @pytest.mark.parametrize(
+    argnames="category_ranges, conversion_map, expected_output",
+    # fmt: off
+    argvalues=[
+        (
+            deque([range(55, 68), range(79, 93)]),
+            deque([(range(50, 98), 2), (range(98, 100), -48)]),
+            [57,58,59,60,61,62,63,64,65,66,67,68,69,81,82,83,84,85,86,87,88,89,90,91,92,93,94],
+        ),
+        (
+            deque([range(81, 95), range(57, 70)]),
+            deque([(range(0, 15), 39), (range(15, 52), -15), (range(52, 54), -15)]),
+            [57,58,59,60,61,62,63,64,65,66,67,68,69,81,82,83,84,85,86,87,88,89,90,91,92,93,94],
+        ),
+        (
+            deque([range(81, 95), range(57, 70)]),
+            deque([(range(0, 7), 42), (range(11, 53), -11), (range(7, 11), 50), (range(53, 61), -4)]),
+            [53,54,55,56,61,62,63,64,65,66,67,68,69,81,82,83,84,85,86,87,88,89,90,91,92,93,94],
+        ),
+        (
+            deque([range(53, 57), range(81, 95), range(61, 70)]),
+            deque([(range(18, 25), 70), (range(25, 95), -7)]),
+            [46,47,48,49,54,55,56,57,58,59,60,61,62,74,75,76,77,78,79,80,81,82,83,84,85,86,87],
+        ),
+        (
+            deque([range(54, 63), range(74, 88), range(46, 50)]),
+            deque([(range(77, 100), -32), (range(45, 64), 36), (range(64, 77), 4)]),
+            [45,46,47,48,49,50,51,52,53,54,55,78,79,80,82,83,84,85,90,91,92,93,94,95,96,97,98],
+        ),
+        (
+            deque([range(82, 86), range(45, 56), range(90, 99), range(78, 81)]),
+            deque([(range(69, 70), -69), (range(0, 69), 1)]),
+            [ 46,47,48,49,50,51,52,53,54,55,56,78,79,80,82,83,84,85,90,91,92,93,94,95,96,97,98],
+        ),
+        (
+            deque([range(78, 81), range(90, 99), range(46, 57), range(82, 86)]),
+            deque([(range(56, 93), 4), (range(93, 97), -37)]),
+            [ 46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,82,83,84,86,87,88,89,94,95,96,97,98],
+        ),
+    ],
+    ids=["seed-to-soil", "soil-to-fertilizer", "fertilizer-to-water", "water-to-light", 
+         "light-to-temperature", "temperature-to-humidity", "humidity-to-location"],
+)
+# fmt: on
+def test_convert_ranges(category_ranges, conversion_map, expected_output):
+    result = convert_ranges(category_ranges, conversion_map)
+    assert (
+        sorted(num for num_list in (list(r) for r in result) for num in num_list)
+        == expected_output
+    )
+
+
+@pytest.mark.parametrize(
     argnames="input, expected_output",
     argvalues=[
         (eg_input, 46),
@@ -88,277 +140,3 @@ def test_parse_seeds():
 )
 def test_part2(input: List[str], expected_output: Union[str, int]):
     assert part2(input) == expected_output
-
-
-@pytest.mark.parametrize(
-    argnames="category_ranges, conversion_map, expected_output",
-    argvalues=[
-        (
-            deque([range(55, 68), range(79, 93)]),
-            deque([(range(50, 98), 2), (range(98, 100), -48)]),
-            sorted(
-                [
-                    57,
-                    58,
-                    59,
-                    60,
-                    61,
-                    62,
-                    63,
-                    64,
-                    65,
-                    66,
-                    67,
-                    68,
-                    69,
-                    81,
-                    82,
-                    83,
-                    84,
-                    85,
-                    86,
-                    87,
-                    88,
-                    89,
-                    90,
-                    91,
-                    92,
-                    93,
-                    94,
-                ]
-            ),
-        ),
-        (
-            deque([range(81, 95), range(57, 70)]),
-            deque([(range(0, 15), 39), (range(15, 52), -15), (range(52, 54), -15)]),
-            sorted(
-                [
-                    57,
-                    58,
-                    59,
-                    60,
-                    61,
-                    62,
-                    63,
-                    64,
-                    65,
-                    66,
-                    67,
-                    68,
-                    69,
-                    81,
-                    82,
-                    83,
-                    84,
-                    85,
-                    86,
-                    87,
-                    88,
-                    89,
-                    90,
-                    91,
-                    92,
-                    93,
-                    94,
-                ]
-            ),
-        ),
-        (
-            deque([range(81, 95), range(57, 70)]),
-            deque(
-                [
-                    (range(0, 7), 42),
-                    (range(11, 53), -11),
-                    (range(7, 11), 50),
-                    (range(53, 61), -4),
-                ]
-            ),
-            sorted(
-                [
-                    53,
-                    54,
-                    55,
-                    56,
-                    61,
-                    62,
-                    63,
-                    64,
-                    65,
-                    66,
-                    67,
-                    68,
-                    69,
-                    81,
-                    82,
-                    83,
-                    84,
-                    85,
-                    86,
-                    87,
-                    88,
-                    89,
-                    90,
-                    91,
-                    92,
-                    93,
-                    94,
-                ]
-            ),
-        ),
-        (
-            deque([range(53, 57), range(81, 95), range(61, 70)]),
-            deque([(range(18, 25), 70), (range(25, 95), -7)]),
-            sorted(
-                [
-                    46,
-                    47,
-                    48,
-                    49,
-                    54,
-                    55,
-                    56,
-                    57,
-                    58,
-                    59,
-                    60,
-                    61,
-                    62,
-                    74,
-                    75,
-                    76,
-                    77,
-                    78,
-                    79,
-                    80,
-                    81,
-                    82,
-                    83,
-                    84,
-                    85,
-                    86,
-                    87,
-                ]
-            ),
-        ),
-        (
-            deque([range(54, 63), range(74, 88), range(46, 50)]),
-            deque([(range(77, 100), -32), (range(45, 64), 36), (range(64, 77), 4)]),
-            sorted(
-                [
-                    45,
-                    46,
-                    47,
-                    48,
-                    49,
-                    50,
-                    51,
-                    52,
-                    53,
-                    54,
-                    55,
-                    78,
-                    79,
-                    80,
-                    82,
-                    83,
-                    84,
-                    85,
-                    90,
-                    91,
-                    92,
-                    93,
-                    94,
-                    95,
-                    96,
-                    97,
-                    98,
-                ]
-            ),
-        ),
-        (
-            deque([range(82, 86), range(45, 56), range(90, 99), range(78, 81)]),
-            deque([(range(69, 70), -69), (range(0, 69), 1)]),
-            sorted(
-                [
-                    46,
-                    47,
-                    48,
-                    49,
-                    50,
-                    51,
-                    52,
-                    53,
-                    54,
-                    55,
-                    56,
-                    78,
-                    79,
-                    80,
-                    82,
-                    83,
-                    84,
-                    85,
-                    90,
-                    91,
-                    92,
-                    93,
-                    94,
-                    95,
-                    96,
-                    97,
-                    98,
-                ]
-            ),
-        ),
-        (
-            deque([range(78, 81), range(90, 99), range(46, 57), range(82, 86)]),
-            deque([(range(56, 93), 4), (range(93, 97), -37)]),
-            sorted(
-                [
-                    46,
-                    47,
-                    48,
-                    49,
-                    50,
-                    51,
-                    52,
-                    53,
-                    54,
-                    55,
-                    56,
-                    57,
-                    58,
-                    59,
-                    60,
-                    82,
-                    83,
-                    84,
-                    86,
-                    87,
-                    88,
-                    89,
-                    94,
-                    95,
-                    96,
-                    97,
-                    98,
-                ]
-            ),
-        ),
-    ],
-    ids=[
-        "seed-to-soil",
-        "soil-to-fertilizer",
-        "fertilizer-to-water",
-        "water-to-light",
-        "light-to-temperature",
-        "temperature-to-humidity",
-        "humidity-to-location",
-    ],
-)
-def test_convert_pt2(category_ranges, conversion_map, expected_output):
-    result = convert_ranges(category_ranges, conversion_map)
-    assert (
-        sorted(num for num_list in (list(r) for r in result) for num in num_list)
-        == expected_output
-    )
