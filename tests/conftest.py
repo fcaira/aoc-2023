@@ -1,7 +1,7 @@
-from typing import List
+from typing import List, Union
 
 
-def get_input(filepath: str, split="\n") -> List[str]:
+def get_input(filepath: str, split="\n") -> Union[List[str], str]:
     with open(filepath, "r") as fp:
         string = fp.read()
     if not split:

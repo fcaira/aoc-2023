@@ -1,8 +1,5 @@
-import time
-
 from collections import deque
 from dataclasses import dataclass
-from loguru import logger
 
 
 @dataclass
@@ -51,7 +48,6 @@ def part1(i):
 
 
 def part2(i):
-    start = time.time()
     cards = parse_cards(i)
     to_visit = deque(cards.values())
     visited = 0
@@ -60,16 +56,10 @@ def part2(i):
         for c in to_visit
     }
 
-    mid = time.time()
-
     while to_visit:
         card = to_visit.pop()
         visited += 1
         for new_card in map[card.id]:
             to_visit.append(new_card)
-
-    end = time.time()
-
-    logger.info((mid - start, end - mid, end - start))
 
     return visited

@@ -120,4 +120,3 @@ Public Class CompareByType
 
         End Function
     End Class
-

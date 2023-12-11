@@ -1,7 +1,17 @@
 from collections import deque
-from loguru import logger
 from math import inf
 from typing import List, Tuple, Deque
+
+
+CONVERSIONS = [
+    "seed-to-soil",
+    "soil-to-fertilizer",
+    "fertilizer-to-water",
+    "water-to-light",
+    "light-to-temperature",
+    "temperature-to-humidity",
+    "humidity-to-location",
+]
 
 
 def parse_map(raw_map: str):
@@ -23,36 +33,29 @@ def convert(category: int, conversion_map: Deque[Tuple[range, int]]):
     for range, diff in conversion_map:
         if category in range:
             new_val = category + diff
-            logger.info(f"{category} -> {new_val}")
             return new_val
     new_val = category
-    logger.info(f"{category} -> {new_val}")
     return new_val
 
 
 def part1(i):
-    seeds = (int(num) for num in i[0].split()[1:])
+    seeds = set(int(num) for num in i[0].split()[1:])
     maps = parse_maps(i[1:])
     min_location = inf
     for seed in seeds:
-        soil = convert(seed, maps["seed-to-soil"])
-        fertilizer = convert(soil, maps["soil-to-fertilizer"])
-        water = convert(fertilizer, maps["fertilizer-to-water"])
-        light = convert(water, maps["water-to-light"])
-        temperature = convert(light, maps["light-to-temperature"])
-        humidity = convert(temperature, maps["temperature-to-humidity"])
-        location = convert(humidity, maps["humidity-to-location"])
-        if location < min_location:
-            min_location = location
+        current_category = seed
+        for conversion in CONVERSIONS:
+            current_category = convert(current_category, maps[conversion])
+        if current_category < min_location:
+            min_location = current_category
     return min_location
 
 
 def parse_seed_range(seeds_line: str):
-    parsed_seeds = deque()
+    parsed_seeds: Deque = deque()
     seed_parts = deque(seeds_line.split()[1:])
     idx = 0
     while seed_parts:
-        logger.info(idx)
         start = int(seed_parts.popleft())
         diff = int(seed_parts.popleft())
         parsed_seeds.append(range(start, start + diff))
@@ -60,58 +63,50 @@ def parse_seed_range(seeds_line: str):
     return parsed_seeds
 
 
-def convert_ranges(
-    category_ranges: Deque[range], conversion_map: Deque[Tuple[range, int]]
-):
-    output_ranges = deque()
+def find_overlap_type(range_a: range, range_b: range):
+    if range_a.start in range_b and (range_a.stop - 1) in range_b:
+        return "full"  #  [ conv ( cat ) ]
+    elif range_a.start not in range_b and (range_a.stop - 1) in range_b:
+        return "start"  # ( cat [ conv ) ]
+    elif range_a.start in range_b and (range_a.stop - 1) not in range_b:
+        return "end"  # [ conv ( cat ] )
+    else:
+        return "none"  # ( cat ) [ conv ]
 
-    while category_ranges:
-        category_range = category_ranges.pop()
-        for conversion_range, diff in conversion_map:
-            # ( cat ) [ conv  ]
-            if (
-                category_range.start not in conversion_range
-                and (category_range.stop - 1) not in conversion_range
-            ):
-                if conversion_range == conversion_map[-1][0]:  # last
-                    output_ranges.append(category_range)
-                continue
 
-            #  [ conv ( cat ) ]
-            elif (
-                category_range.start in conversion_range
-                and (category_range.stop - 1) in conversion_range
-            ):
-                output_ranges.append(
-                    range(category_range.start + diff, category_range.stop + diff)
-                )
-                break
+def convert_ranges(cat_ranges: Deque[range], conv_map: Deque[Tuple[range, int]]):
+    output_ranges: Deque = deque()
 
-            # [ conv ( cat ] )
-            elif (
-                category_range.start in conversion_range
-                and (category_range.stop - 1) not in conversion_range
-            ):
-                output_ranges.append(
-                    range(category_range.start + diff, conversion_range.stop + diff)
-                )
-                if conversion_range.stop != category_range.stop:
-                    category_ranges.appendleft(
-                        range(conversion_range.stop, category_range.stop)
+    while cat_ranges:
+        cat_range = cat_ranges.pop()
+        for conv_range, diff in conv_map:
+            overlap_type = find_overlap_type(cat_range, conv_range)
+
+            match overlap_type:
+                case "none":
+                    if conv_range == conv_map[-1][0]:  # last
+                        output_ranges.append(cat_range)
+                    continue
+
+                case "full":
+                    output_ranges.append(
+                        range(cat_range.start + diff, cat_range.stop + diff)
                     )
-                break
+                    break
 
-            elif (
-                category_range.start not in conversion_range
-                and (category_range.stop - 1) in conversion_range
-            ):
-                category_ranges.appendleft(
-                    range(category_range.start, conversion_range.start)
-                )
-                output_ranges.append(
-                    range(conversion_range.start + diff, category_range.stop + diff)
-                )
-                break
+                case "end":
+                    output_ranges.append(
+                        range(cat_range.start + diff, conv_range.stop + diff)
+                    )
+                    cat_ranges.appendleft(range(conv_range.stop, cat_range.stop))
+                    break
+
+                case "start":
+                    output_ranges.append(
+                        range(conv_range.start + diff, cat_range.stop + diff)
+                    )
+                    cat_ranges.appendleft(range(cat_range.start, conv_range.start))
+                    break
 
     return output_ranges
 
@@ -120,11 +115,7 @@ def part2(i):
     seed_line = i[0].split("\n")[0]
     seed_range = parse_seed_range(seed_line)
     maps = parse_maps(i[1:])
-    soil_range = convert_ranges(seed_range, maps["seed-to-soil"])
-    fertilizer_range = convert_ranges(soil_range, maps["soil-to-fertilizer"])
-    water_range = convert_ranges(fertilizer_range, maps["fertilizer-to-water"])
-    light_range = convert_ranges(water_range, maps["water-to-light"])
-    temperature_range = convert_ranges(light_range, maps["light-to-temperature"])
-    humidity_range = convert_ranges(temperature_range, maps["temperature-to-humidity"])
-    location_range = convert_ranges(humidity_range, maps["humidity-to-location"])
-    return min(r.start for r in location_range)
+    current_range = seed_range
+    for conversion in CONVERSIONS:
+        current_range = convert_ranges(current_range, maps[conversion])
+    return min(r.start for r in current_range)
