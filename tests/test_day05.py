@@ -77,9 +77,9 @@ def test_parse_seeds() -> None:
     )
 
 
+# fmt: off
 @pytest.mark.parametrize(
     argnames="category_ranges, conversion_map, expected_output",
-    # fmt: off
     argvalues=[
         (
             deque([range(55, 68), range(79, 93)]),
@@ -120,6 +120,7 @@ def test_parse_seeds() -> None:
     ids=["seed-to-soil", "soil-to-fertilizer", "fertilizer-to-water", "water-to-light",
          "light-to-temperature", "temperature-to-humidity", "humidity-to-location"],
 )
+
 # fmt: on
 def test_convert_ranges(
     category_ranges: deque[range],
