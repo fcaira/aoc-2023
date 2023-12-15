@@ -56,6 +56,3 @@ def test_parse_single_race(input: list[str], expected_output: list[tuple[int, in
 )
 def test_part2(input: list[str], expected_output: int) -> None:
     assert part2(input) == expected_output
-
-
-4811940  # too low
