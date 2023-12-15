@@ -2,13 +2,14 @@ import pytest
 
 from typing import List, Union
 
-from solutions.day08 import parse_map, part1  # ,  part2,
+from solutions.day08 import parse_map, part1, part2
 
 from tests.conftest import get_input
 
 day = "08"
 eg_input_a = get_input(f"solutions/example_inputs/{day}_a")
 eg_input_b = get_input(f"solutions/example_inputs/{day}_b")
+eg_input_pt2 = get_input(f"solutions/example_inputs/{day}_2")
 input = get_input(f"solutions/inputs/{day}")
 
 
@@ -31,3 +32,15 @@ def test_parse_map():
 )
 def test_part1(input: List[str], expected_output: Union[str, int]):
     assert part1(input) == expected_output
+
+
+@pytest.mark.parametrize(
+    argnames="input, expected_output",
+    argvalues=[
+        (eg_input_pt2, 6),
+        (input, 17972669116327),
+    ],
+    ids=["eg", "ans"],
+)
+def test_part2(input: List[str], expected_output: Union[str, int]):
+    assert part2(input) == expected_output

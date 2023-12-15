@@ -23,3 +23,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.pytest.ini_options]
 addopts = "-vvv -rP -s"
+
+[tool.mypy]
+disallow_untyped_calls = true
+check_untyped_defs = true
