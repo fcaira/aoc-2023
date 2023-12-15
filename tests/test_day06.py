@@ -38,18 +38,13 @@ def test_part1(input: List[str], expected_output: Union[str, int]):
 @pytest.mark.parametrize(
     argnames="input, expected_output",
     argvalues=[
-        (eg_input, [(71530, 940200)]),
-        (
-            input,
-            [
-                (41968894, 214178911271055),
-            ],
-        ),
+        (eg_input, (71530, 940200)),
+        (input, (41968894, 214178911271055)),
     ],
     ids=["eg", "ans"],
 )
 def test_parse_single_race(input: List[str], expected_output: List[Tuple[int, int]]):
-    assert list(parse_single_race(input)) == expected_output
+    assert parse_single_race(input) == expected_output
 
 
 @pytest.mark.parametrize(
