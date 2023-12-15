@@ -6,7 +6,7 @@ from collections import namedtuple
 Req = namedtuple("Req", "colour, thres")
 
 
-def part1(i):
+def part1(i: list[str]) -> int:
     poss_game_sum = 0
     for game in i:
         game_possible = True
@@ -25,7 +25,7 @@ def part1(i):
     return poss_game_sum
 
 
-def part2(i):
+def part2(i: list[str]) -> int:
     total_game_powers = 0
     for game in i:
         max_colour_nums = []

@@ -1,9 +1,8 @@
 from math import sqrt, floor, ceil
 from re import findall
-from typing import List, Tuple, Iterable
 
 
-def parse_races(raw_races: List[str]) -> Iterable[Tuple[int, int]]:
+def parse_races(raw_races: list[str]) -> zip[tuple[int, int]]:
     return zip(
         *[
             [int(num) for num in findall(r"([0-9]+)", raw_races[idx])]
@@ -12,7 +11,7 @@ def parse_races(raw_races: List[str]) -> Iterable[Tuple[int, int]]:
     )
 
 
-def part1(i: List[str]) -> int:
+def part1(i: list[str]) -> int:
     total = 1
     for race in parse_races(i):
         total_time, dist_thres = race
@@ -26,13 +25,13 @@ def part1(i: List[str]) -> int:
     return total
 
 
-def parse_single_race(raw_race: List[str]) -> Tuple[int, int]:
+def parse_single_race(raw_race: list[str]) -> tuple[int, int]:
     return int("".join(findall(r"([0-9]+)", raw_race[0]))), int(
         "".join(findall(r"([0-9]+)", raw_race[1]))
     )
 
 
-def part2(i: List[str]) -> int:
+def part2(i: list[str]) -> int:
     """
     Part 2 ends up as a quadratic equation solve
     - we want the diff between the upper and lower bounds for winning.

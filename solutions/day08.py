@@ -1,9 +1,8 @@
 from math import lcm
 from re import findall
-from typing import Tuple, Dict, List
 
 
-def parse_map(raw_map: List[str] | str) -> Tuple[str, Dict[str, Dict[str, str]]]:
+def parse_map(raw_map: list[str] | str) -> tuple[str, dict[str, dict[str, str]]]:
     directions = raw_map[0]
     map = {}
     ln: str = ""
@@ -13,7 +12,7 @@ def parse_map(raw_map: List[str] | str) -> Tuple[str, Dict[str, Dict[str, str]]]
     return directions, map
 
 
-def part1(i: List[str]) -> int:
+def part1(i: list[str]) -> int:
     directions, map = parse_map(i)
     node = "AAA"
     steps = 0
@@ -24,7 +23,7 @@ def part1(i: List[str]) -> int:
     return steps
 
 
-def part2(i: List[str]):
+def part2(i: list[str]) -> int:
     """
     Instead of trying to calculate routes starting at different nodes simultaneously,
     calculate steps per each route and find the lowest common multiple

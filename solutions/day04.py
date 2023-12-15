@@ -1,5 +1,6 @@
 from collections import deque
 from dataclasses import dataclass
+from typing import Self
 
 
 @dataclass
@@ -7,14 +8,16 @@ class Card:
     id: int
     num_won: int
 
-    def __hash__(self):
+    def __hash__(self: Self) -> int:
         return self.id
 
-    def __eq__(self, other):
+    def __eq__(self: Self, other: object) -> bool:
+        if not isinstance(other, Card):
+            return NotImplemented
         return self.id == other.id
 
 
-def parse_cards(raw_input):
+def parse_cards(raw_input: list[str]) -> dict[int, Card]:
     card_dict = {}
     for raw_card in raw_input:
         id = int(raw_card.split(":")[0].split()[1])
@@ -40,14 +43,14 @@ def parse_cards(raw_input):
     return card_dict
 
 
-def part1(i):
+def part1(i: list[str]) -> int:
     points = 0
     for card in parse_cards(i).values():
         points += 1 * 2 ** (card.num_won - 1) if card.num_won > 0 else 0
     return int(points)
 
 
-def part2(i):
+def part2(i: list[str]) -> int:
     cards = parse_cards(i)
     to_visit = deque(cards.values())
     visited = 0

@@ -3,7 +3,7 @@ import re
 from math import prod
 
 
-def part1(i):
+def part1(i: list[str]) -> int:
     width = len(i[0])
     ln_joined = "".join(i)
     digits = list(re.finditer(r"([0-9]+)", ln_joined))
@@ -23,7 +23,7 @@ def part1(i):
     return sum
 
 
-def part2(i):
+def part2(i: list[str]) -> int:
     width = len(i[0])
     ln_joined = "".join(i)
     digits = list(re.finditer(r"([0-9]+)", ln_joined))

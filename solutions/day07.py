@@ -1,11 +1,10 @@
 from collections import Counter
-from typing import List, Dict
 
 PART1_LABELS = ["A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2"]
 PART2_LABELS = ["A", "K", "Q", "T", "9", "8", "7", "6", "5", "4", "3", "2", "J"]
 
 
-def deal_with_jokers(hand: str, translator: Dict[str, int]):
+def deal_with_jokers(hand: str, translator: dict[str, int]) -> str:
     """
     Checks for jokers ("J") in the hand, replaces them with the
     most common (count[x]) AND highest value (translator[x]) other character in the hand
@@ -13,7 +12,7 @@ def deal_with_jokers(hand: str, translator: Dict[str, int]):
     """
     if "J" in hand:
         count = Counter(hand)
-        del count["J"] # to avoid replacing J with J
+        del count["J"]  # to avoid replacing J with J
         best_val_char = max(
             count, key=lambda x: (count[x], translator[x]), default=min(translator)
         )
@@ -21,7 +20,7 @@ def deal_with_jokers(hand: str, translator: Dict[str, int]):
     return hand
 
 
-def first_order(hand: str):
+def first_order(hand: str) -> int:
     """
     Uses a count of each character to determine order
     e.g. "32T3K" results in {"3": 2, "2": 1, "T": 1, "K": 1}
@@ -43,7 +42,7 @@ def first_order(hand: str):
     )  # Two pair (e.g. 23432) or One pair (e.g. A23A4)
 
 
-def second_order(hand: str, translator: Dict[str, int]):
+def second_order(hand: str, translator: dict[str, int]) -> list[int]:
     """
     Converts hand into a list of ints for ordering
     e.g. "A" maps to 13; "2" maps to 1
@@ -52,7 +51,9 @@ def second_order(hand: str, translator: Dict[str, int]):
     return [translator[char] for char in hand]
 
 
-def add_ordering(hands: List[str], labels: List[str], jokers: bool = False):
+def add_ordering(
+    hands: list[str], labels: list[str], jokers: bool = False
+) -> list[tuple[str, int, list[int]]]:
     """
     Takes the list of hand-bet lines, creates a tuple,
     adding a list of orders (first, then second)
@@ -76,7 +77,7 @@ def add_ordering(hands: List[str], labels: List[str], jokers: bool = False):
     ]
 
 
-def part1(i: List[str]):
+def part1(i: list[str]) -> int:
     """
     Adds ordering to the hand-bet lines, resulting in a list of tuples,
     then sorts the list of tuples according to the ordering
@@ -91,7 +92,7 @@ def part1(i: List[str]):
     )
 
 
-def part2(i):
+def part2(i: list[str]) -> int:
     """
     Adds ordering to the hand-bet lines, dealing with jokers as an added complication,
     resulting in a list of tuples,

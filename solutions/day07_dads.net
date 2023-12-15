@@ -17,7 +17,7 @@ Public Class Hand
         End Property
 
         Property Cards As String
-        Property CardRanks As New List(Of String)
+        Property CardRanks As New list(Of String)
         Property BidAmount As Integer
         Property Cardvals As String
         Property TypeOfHand As String
@@ -72,9 +72,9 @@ Public Class Hand
     End Class
 
 Public Sub Day7()
-        Dim mydata As New List(Of String)
+        Dim mydata As New list(Of String)
         mydata = AOC2023.inputdata("D:\Advent Of Code Data\2023\Day 7\Puzzle 7a.txt")
-        Dim hands As New List(Of Hand)
+        Dim hands As New list(Of Hand)
         For Each m In mydata
             Dim h As New Hand
             h.Data = m

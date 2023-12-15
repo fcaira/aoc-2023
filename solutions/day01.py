@@ -1,16 +1,16 @@
 import re
 
 
-def parse_numerals_line(ln):
+def parse_numerals_line(ln: str) -> str:
     matches = re.findall(r"\d", ln)
     return matches[0] + matches[-1]
 
 
-def part1(i):
+def part1(i: list[str]) -> int:
     return sum(int(parse_numerals_line(ln)) for ln in i)
 
 
-def part2(i):
+def part2(i: list[str]) -> int:
     vals = []
     digit_map = {
         d: d[0] + str(idx + 1) + d[1:]

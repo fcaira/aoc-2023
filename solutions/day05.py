@@ -1,6 +1,5 @@
 from collections import deque
 from math import inf
-from typing import List, Tuple, Deque
 
 
 CONVERSIONS = [
@@ -14,7 +13,7 @@ CONVERSIONS = [
 ]
 
 
-def parse_map(raw_map: str):
+def parse_map(raw_map: str) -> dict[str, deque[tuple[range, int]]]:
     lines = raw_map.split("\n")
     conversion = lines[0].split()[0]
     range_map = deque(
@@ -25,11 +24,11 @@ def parse_map(raw_map: str):
     return {conversion: range_map}
 
 
-def parse_maps(raw_maps: List[str]):
+def parse_maps(raw_maps: list[str]) -> dict[str, deque[tuple[range, int]]]:
     return {k: v for raw_map in raw_maps for k, v in parse_map(raw_map).items()}
 
 
-def convert(category: int, conversion_map: Deque[Tuple[range, int]]):
+def convert(category: int, conversion_map: deque[tuple[range, int]]) -> int:
     for range, diff in conversion_map:
         if category in range:
             new_val = category + diff
@@ -38,7 +37,7 @@ def convert(category: int, conversion_map: Deque[Tuple[range, int]]):
     return new_val
 
 
-def part1(i):
+def part1(i: list[str]) -> float:
     seeds = set(int(num) for num in i[0].split()[1:])
     maps = parse_maps(i[1:])
     min_location = inf
@@ -51,8 +50,8 @@ def part1(i):
     return min_location
 
 
-def parse_seed_range(seeds_line: str):
-    parsed_seeds: Deque = deque()
+def parse_seed_range(seeds_line: str) -> deque[range]:
+    parsed_seeds: deque[range] = deque()
     seed_parts = deque(seeds_line.split()[1:])
     idx = 0
     while seed_parts:
@@ -63,7 +62,7 @@ def parse_seed_range(seeds_line: str):
     return parsed_seeds
 
 
-def find_overlap_type(range_a: range, range_b: range):
+def find_overlap_type(range_a: range, range_b: range) -> str:
     if range_a.start in range_b and (range_a.stop - 1) in range_b:
         return "full"  #  [ conv ( cat ) ]
     elif range_a.start not in range_b and (range_a.stop - 1) in range_b:
@@ -74,8 +73,10 @@ def find_overlap_type(range_a: range, range_b: range):
         return "none"  # ( cat ) [ conv ]
 
 
-def convert_ranges(cat_ranges: Deque[range], conv_map: Deque[Tuple[range, int]]):
-    output_ranges: Deque = deque()
+def convert_ranges(
+    cat_ranges: deque[range], conv_map: deque[tuple[range, int]]
+) -> deque[range]:
+    output_ranges: deque[range] = deque()
 
     while cat_ranges:
         cat_range = cat_ranges.pop()
@@ -111,7 +112,7 @@ def convert_ranges(cat_ranges: Deque[range], conv_map: Deque[Tuple[range, int]])
     return output_ranges
 
 
-def part2(i):
+def part2(i: list[str]) -> int:
     seed_line = i[0].split("\n")[0]
     seed_range = parse_seed_range(seed_line)
     maps = parse_maps(i[1:])
