@@ -1,6 +1,5 @@
 import pytest
 
-from typing import List, Union
 
 from solutions.day07 import (
     PART1_LABELS,
@@ -46,7 +45,12 @@ input = get_input(f"solutions/inputs/{day}")
     ],
     ids=["pt1", "pt2"],
 )
-def test_add_ordering(input, labels, jokers, expected_output):
+def test_add_ordering(
+    input: list[str],
+    labels: list[str],
+    jokers: bool,
+    expected_output: tuple[str, int, list[int]],
+) -> None:
     assert add_ordering(eg_input, labels, jokers) == expected_output
 
 
@@ -58,7 +62,7 @@ def test_add_ordering(input, labels, jokers, expected_output):
     ],
     ids=["eg", "ans"],
 )
-def test_part1(input: List[str], expected_output: Union[str, int]):
+def test_part1(input: list[str], expected_output: int) -> None:
     assert part1(input) == expected_output
 
 
@@ -70,5 +74,5 @@ def test_part1(input: List[str], expected_output: Union[str, int]):
     ],
     ids=["eg", "ans"],
 )
-def test_part2(input: List[str], expected_output: Union[str, int]):
+def test_part2(input: list[str], expected_output: int) -> None:
     assert part2(input) == expected_output

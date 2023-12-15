@@ -1,6 +1,5 @@
 import pytest
 
-from typing import List, Union
 
 from solutions.day08 import parse_map, part1, part2
 
@@ -13,7 +12,7 @@ eg_input_pt2 = get_input(f"solutions/example_inputs/{day}_2")
 input = get_input(f"solutions/inputs/{day}")
 
 
-def test_parse_map():
+def test_parse_map() -> None:
     parsed_map = parse_map(eg_input_a)
     assert len(parsed_map) == 2
     assert parsed_map[0] == ("RL")
@@ -30,7 +29,7 @@ def test_parse_map():
     ],
     ids=["eg_a", "eg_b", "ans"],
 )
-def test_part1(input: List[str], expected_output: Union[str, int]):
+def test_part1(input: list[str], expected_output: int) -> None:
     assert part1(input) == expected_output
 
 
@@ -42,5 +41,5 @@ def test_part1(input: List[str], expected_output: Union[str, int]):
     ],
     ids=["eg", "ans"],
 )
-def test_part2(input: List[str], expected_output: Union[str, int]):
+def test_part2(input: list[str], expected_output: int) -> None:
     assert part2(input) == expected_output

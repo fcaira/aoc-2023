@@ -1,6 +1,5 @@
 import pytest
 
-from typing import List, Union, Tuple
 
 from solutions.day06 import (
     parse_races,
@@ -22,8 +21,8 @@ input = get_input("solutions/inputs/06")
     ],
     ids=["eg", "ans"],
 )
-def test_parse_races(input: List[str], expected_output: List[Tuple[int, int]]):
-    assert list(parse_races(input)) == expected_output
+def test_parse_races(input: list[str], expected_output: list[tuple[int, int]]) -> None:
+    assert parse_races(input) == expected_output
 
 
 @pytest.mark.parametrize(
@@ -31,7 +30,7 @@ def test_parse_races(input: List[str], expected_output: List[Tuple[int, int]]):
     argvalues=[(eg_input, 288), (input, 4811940)],
     ids=["eg", "ans"],
 )
-def test_part1(input: List[str], expected_output: Union[str, int]):
+def test_part1(input: list[str], expected_output: int) -> None:
     assert part1(input) == expected_output
 
 
@@ -43,7 +42,7 @@ def test_part1(input: List[str], expected_output: Union[str, int]):
     ],
     ids=["eg", "ans"],
 )
-def test_parse_single_race(input: List[str], expected_output: List[Tuple[int, int]]):
+def test_parse_single_race(input: list[str], expected_output: list[tuple[int, int]]) -> None:
     assert parse_single_race(input) == expected_output
 
 
@@ -55,7 +54,7 @@ def test_parse_single_race(input: List[str], expected_output: List[Tuple[int, in
     ],
     ids=["eg", "ans"],
 )
-def test_part2(input: List[str], expected_output: Union[str, int]):
+def test_part2(input: list[str], expected_output: int) -> None:
     assert part2(input) == expected_output
 
 

@@ -2,12 +2,14 @@ from math import sqrt, floor, ceil
 from re import findall
 
 
-def parse_races(raw_races: list[str]) -> zip[tuple[int, int]]:
-    return zip(
-        *[
-            [int(num) for num in findall(r"([0-9]+)", raw_races[idx])]
-            for idx in range(2)
-        ]
+def parse_races(raw_races: list[str]) -> list[tuple[int, int]]:
+    return list(
+        zip(
+            *[
+                [int(num) for num in findall(r"([0-9]+)", raw_races[idx])]
+                for idx in range(2)
+            ]
+        )
     )
 
 

@@ -26,4 +26,5 @@ addopts = "-vvv -rP -s"
 
 [tool.mypy]
 disallow_untyped_calls = true
-check_untyped_defs = true
+disallow_any_generics = true
+disallow_untyped_defs = true

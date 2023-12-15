@@ -1,7 +1,6 @@
 import pytest
 
 from collections import deque
-from typing import List, Union
 from solutions.day05 import (
     parse_map,
     parse_maps,
@@ -18,7 +17,7 @@ eg_input = get_input(f"solutions/example_inputs/{day}", split="\n\n")
 input = get_input(f"solutions/inputs/{day}", split="\n\n")
 
 
-def test_parse_map():
+def test_parse_map() -> None:
     seed_to_soil_map = parse_map("seed-to-soil map:\n50 98 2\n52 50 48")
     assert set(seed_to_soil_map["seed-to-soil"]) == set(
         [
@@ -28,7 +27,7 @@ def test_parse_map():
     )
 
 
-def test_parse_maps():
+def test_parse_maps() -> None:
     all_maps = parse_maps(
         [
             "seed-to-soil map:\n50 98 2\n52 50 48",
@@ -49,7 +48,7 @@ def test_parse_maps():
     assert "humidity-to-location" in all_maps
 
 
-def test_convert():
+def test_convert() -> None:
     map = parse_map("seed-to-soil map:\n50 98 2\n52 50 48")["seed-to-soil"]
     assert convert(79, map) == 81
     assert convert(14, map) == 14
@@ -65,11 +64,11 @@ def test_convert():
     ],
     ids=["eg", "ans"],
 )
-def test_part1(input: List[str], expected_output: Union[str, int]):
+def test_part1(input: list[str], expected_output: int) -> None:
     assert part1(input) == expected_output
 
 
-def test_parse_seeds():
+def test_parse_seeds() -> None:
     assert parse_seed_range("seeds: 79 14 55 13") == deque(
         [
             range(79, 93),
@@ -122,7 +121,11 @@ def test_parse_seeds():
          "light-to-temperature", "temperature-to-humidity", "humidity-to-location"],
 )
 # fmt: on
-def test_convert_ranges(category_ranges, conversion_map, expected_output):
+def test_convert_ranges(
+    category_ranges: deque[range],
+    conversion_map: deque[tuple[range, int]],
+    expected_output: list[int],
+) -> None:
     result = convert_ranges(category_ranges, conversion_map)
     assert (
         sorted(num for num_list in (list(r) for r in result) for num in num_list)
@@ -138,5 +141,5 @@ def test_convert_ranges(category_ranges, conversion_map, expected_output):
     ],
     ids=["eg", "ans"],
 )
-def test_part2(input: List[str], expected_output: Union[str, int]):
+def test_part2(input: list[str], expected_output: int) -> None:
     assert part2(input) == expected_output

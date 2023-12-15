@@ -1,6 +1,5 @@
 import pytest
 
-from typing import List, Union
 
 from solutions.day04 import parse_cards, part1, part2
 from tests.conftest import get_input
@@ -10,7 +9,7 @@ eg_input = get_input(f"solutions/example_inputs/{day}")
 input = get_input(f"solutions/inputs/{day}")
 
 
-def test_parse_cards():
+def test_parse_cards() -> None:
     # Card 1: 41 48 83 86 17 | 83 86  6 31 17  9 48 53
     card = parse_cards(eg_input)[1]
     assert card.id == 1
@@ -25,7 +24,7 @@ def test_parse_cards():
     ],
     ids=["eg", "ans"],
 )
-def test_part1(input: List[str], expected_output: Union[str, int]):
+def test_part1(input: list[str], expected_output: int) -> None:
     assert part1(input) == expected_output
 
 
@@ -37,5 +36,5 @@ def test_part1(input: List[str], expected_output: Union[str, int]):
     ],
     ids=["eg", "ans"],
 )
-def test_part2(input: List[str], expected_output: Union[str, int]):
+def test_part2(input: list[str], expected_output: int) -> None:
     assert part2(input) == expected_output

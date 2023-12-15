@@ -1,6 +1,5 @@
 import pytest
 
-from typing import List, Union
 
 from solutions.day03 import part1, part2
 from tests.conftest import get_input
@@ -18,7 +17,7 @@ input = get_input(f"solutions/inputs/{day}")
     ],
     ids=["eg", "ans"],
 )
-def test_part1(input: List[str], expected_output: Union[str, int]):
+def test_part1(input: list[str], expected_output: int) -> None:
     assert part1(input) == expected_output
 
 
@@ -30,5 +29,5 @@ def test_part1(input: List[str], expected_output: Union[str, int]):
     ],
     ids=["eg", "ans"],
 )
-def test_part2(input: List[str], expected_output: Union[str, int]):
+def test_part2(input: list[str], expected_output: int) -> None:
     assert part2(input) == expected_output
