@@ -22,7 +22,7 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.pytest.ini_options]
-addopts = "-vvv -rP -s"
+addopts = "-vvv -rP -s --ignore-glob=tests/test_dayxx.py"
 
 [tool.mypy]
 disallow_untyped_calls = true
